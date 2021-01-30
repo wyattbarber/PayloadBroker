@@ -1,22 +1,24 @@
 const firestore = require('./firestore');
 
-exports.address_ap = (req, res) => {
-    const source_ip = req.ip;
+exports.link_home = (req, res) => {
+    const secret = req.query.secret;
+    var data = firestore.getUserData(req, res);
 
-    // Get data to validate source
-    const data = firestore.getUserData(req, res);
-    if (req.query.key != data.HomeSecret) {
-        res.status(400).send({error : 'Failed to verify source identity'});
+    // Verify source of request
+    if (secret != data.HomeSecret) {
+        res.status(400).send({error: "Could not verify source"});
         return;
     }
-
-    // Source verified, store new ip
+    // Source verified, set home url
     var newReq = req;
     newReq.body.param = 'HomeAddress';
-    newReq.body.value = source_ip;
-    firestore.set(newReq, res);
+    newReq.body.value = req.query.url;
+    firestore.set(req, res);
+    data = firestore.getUserData(req, res);
 
-    // Respond to request
-    res.status(202).send({ip: source_ip});
-    return;
+    // Send response with verification key and set url
+    res.status(202).send({
+        key: data.HomeAccesKey,
+        url: data.HomeAddress
+    });
 }
