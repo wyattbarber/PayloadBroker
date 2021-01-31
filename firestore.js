@@ -32,8 +32,8 @@ module.exports = {
             ? req.query.value
             : req.body.value;
 
-        const clientDoc = await db.collection('Home Data').doc(client).get();
-        if (clientDoc.exists) {
+        const clientDoc = await db.collection('Home Data').doc(client);
+        if (clientDoc) {
             try {
                 if(param == 'HomeAddress'){
                    await clientDoc.update({"HomeAddress": value});
