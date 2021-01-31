@@ -12,13 +12,15 @@ exports.link_home = (req, res) => {
         var newReq = req;
         newReq.body.param = 'HomeAddress';
         newReq.body.value = req.body.url;
-        firestore.set(req, res);
-        firestore.getUserData(req, res).then((newData) => {
-            // Send response with verification key and set url
-            res.status(202).send({
-                key: newData.HomeAccesKey,
-                url: newData.HomeAddress
+        firestore.set(req, res).then(function(){
+            firestore.getUserData(req, res).then((newData) => {
+                // Send response with verification key and set url
+                res.status(202).send({
+                    key: newData.HomeAccesKey,
+                    url: newData.HomeAddress
+                });
             });
         });
+        
     });
 }
