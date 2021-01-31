@@ -35,10 +35,18 @@ module.exports = {
         const clientDoc = await db.collection('Home Data').doc(client).get();
         if (clientDoc.exists) {
             try {
-                clientDoc.update({param: value});
+                if(param == 'HomeAddress'){
+                   await clientDoc.update({"HomeAddress": value});
+                   return;
+                }
+                if(param == 'HomeAccessKey') {
+                    await clientDoc.update({"HomeAccessKey": value});
+                    return
+                }
+                throw "Unsupported parameter";
             }
             catch (e) {
-                res.status(400).send({ error: 'Failed to update data' });
+                res.status(400).send({ error: 'Failed to update data: '+e});
                 return;
             }
         }
