@@ -1,7 +1,7 @@
 const firestore = require('./firestore');
 
 exports.link_home = (req, res) => {
-    const secret = req.query.secret;
+    const secret = req.body.secret;
     var data = firestore.getUserData(req, res);
 
     // Verify source of request
@@ -12,7 +12,7 @@ exports.link_home = (req, res) => {
     // Source verified, set home url
     var newReq = req;
     newReq.body.param = 'HomeAddress';
-    newReq.body.value = req.query.url;
+    newReq.body.value = req.body.url;
     firestore.set(req, res);
     data = firestore.getUserData(req, res);
 
