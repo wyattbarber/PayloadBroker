@@ -6,7 +6,7 @@ exports.link_home = (req, res) => {
 
     // Verify source of request
     if (secret != data.HomeSecret) {
-        res.status(400).send({error: "Could not verify source"});
+        res.status(400).send({error: "Could not verify source "+secret});
         return;
     }
     // Source verified, set home url
