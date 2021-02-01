@@ -42,7 +42,7 @@ app.onExecute((body, headers) => {
 
 });
 
-exports.router = functions.http.onRequest(app);
+exports.router = functions.https.onRequest(app);
 
 // Store url from home device
 exports.link_home = (req, res) => {
