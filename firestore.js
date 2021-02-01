@@ -60,11 +60,13 @@ module.exports = {
     getEndpoint: async function(token) {
         db.collection('Home Data').where('AuthToken', '==', token).get()
         .then((doc) => {
-            let data = await doc.data();
-            return {
-                url: data.HomeAddress,
-                key: data.HomeAccessKey
-            }
+            doc.data()
+            .then((data) => {
+                return {
+                    url: data.HomeAddress,
+                    key: data.HomeAccessKey
+                }
+            });
         });
     }
 };
