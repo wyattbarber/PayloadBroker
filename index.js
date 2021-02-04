@@ -6,7 +6,7 @@ const axios = require('axios');
 
 // Smarthome intent fulfillment 
 app.onSync((body, headers) =>{
-    const authToken = String(headers.authorization);
+    const authToken = String(headers.authorization).substr(7);
     firestore.getEndpoint(authToken)
     .then((home) => {
         axios.get(home.url+'/smarthome/fulfillment/sync?key='+home.key)
