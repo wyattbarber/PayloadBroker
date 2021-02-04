@@ -14,8 +14,8 @@ app.onSync((body, headers) =>{
             let syncResponse = {
                 requestId: body.requestId,
                 payload: {
-                    agentUserId: res.user,
-                    devices: res.devices
+                    agentUserId: res.body.user,
+                    devices: res.body.devices
                 }
             };
             return syncResponse;
