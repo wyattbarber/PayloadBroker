@@ -57,7 +57,7 @@ module.exports = {
 
     },
 
-    getEndpoint: function (token) {
+    getEndpoint: async function (token) {
         console.log('Token query started for ' + token);
         db.collection('Home Data').where('AuthToken', '==', token).get()
             .then((query) => {
@@ -71,7 +71,7 @@ module.exports = {
                 }
 
                 console.log('Token query: match found');
-                const data = query.docs[0].data();
+                const data = await query.docs[0].data();
                 return new Promise((resolve, reject) => {
                     if(data){
                         resolve({
