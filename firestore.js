@@ -5,11 +5,11 @@ const settings = { timestampsInSnapshots: true };
 db.settings(settings);
 
 module.exports = {
-    getUserData: async function(req, res) {
+    getUserData: async function (req, res) {
         const client = req.query.client_id
             ? req.query.client_id
             : req.body.client_id;
-            
+
         const clientDoc = await db.collection('Home Data').doc(client).get();
         if (clientDoc.exists) {
             const data = await clientDoc.data();
@@ -21,7 +21,7 @@ module.exports = {
         }
     },
 
-    set: async function(req, res) {
+    set: async function (req, res) {
         const client = req.query.client_id
             ? req.query.client_id
             : req.body.client_id;
@@ -35,18 +35,18 @@ module.exports = {
         const clientDoc = await db.collection('Home Data').doc(client);
         if (clientDoc) {
             try {
-                if(param == 'HomeAddress'){
-                   await clientDoc.update({"HomeAddress": value});
-                   return;
+                if (param == 'HomeAddress') {
+                    await clientDoc.update({ "HomeAddress": value });
+                    return;
                 }
-                if(param == 'HomeAccessKey') {
-                    await clientDoc.update({"HomeAccessKey": value});
+                if (param == 'HomeAccessKey') {
+                    await clientDoc.update({ "HomeAccessKey": value });
                     return
                 }
                 throw "Unsupported parameter";
             }
             catch (e) {
-                res.status(400).send({ error: 'Failed to update data: '+e});
+                res.status(400).send({ error: 'Failed to update data: ' + e });
                 return;
             }
         }
@@ -54,31 +54,38 @@ module.exports = {
             res.status(404).send({ error: 'Could not locate document for this client' });
             throw 'Error opening document';
         }
-        
+
     },
 
-    getEndpoint: async function(token) {
-        console.log('Token query started for '+token);
+    getEndpoint: async function (token) {
+        console.log('Token query started for ' + token);
         db.collection('Home Data').where('AuthToken', '==', token).get()
-        .then((query) => {
-            if (query.empty) {
-                console.error('Token query: no match found.');
-                throw 'Bad token';
-            }
-            if (query.length > 1) {
-                console.error('Token query: multiple matches found');
-                throw 'Bad token';
-            }
+            .then((query) => {
+                if (query.empty) {
+                    console.error('Token query: no match found.');
+                    throw 'Bad token';
+                }
+                if (query.length > 1) {
+                    console.error('Token query: multiple matches found');
+                    throw 'Bad token';
+                }
 
-            console.log('Token query: match found');
-            const data = query.docs[0].data();
-            return {
-                url: data.HomeAddress,
-                key: data.HomeAccessKey
-            };
-        })
-        .catch((e) => {
-            console.error("Token query: "+e);
-        })
+                console.log('Token query: match found');
+                const data = query.docs[0].data();
+                return new Promise((resolve, reject) => {
+                    if(data){
+                        resolve({
+                            url: data.HomeAddress,
+                            key: data.HomeAccessKey
+                        });
+                    }
+                    else {
+                        reject({
+                            url: "potato",
+                            key: "potato"
+                        })
+                    }
+                });
+            });
     }
 };
