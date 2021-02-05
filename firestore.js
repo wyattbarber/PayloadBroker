@@ -60,12 +60,15 @@ module.exports = {
     getEndpoint: async function(token) {
         db.collection('Home Data').where('AuthToken', '==', token).get()
         .then((query) => {
+            console.log('Token query: found match for '+token);
             const data = query.docs[0].data()
             return {
                 url: data.HomeAddress,
                 key: data.HomeAccessKey
             };
-            
-        });
+        })
+        .catch((e) => {
+            console.error("Token query: "+e);
+        })
     }
 };
