@@ -57,7 +57,7 @@ module.exports = {
 
     },
 
-    getEndpoint: async function (token) {
+    getEndpoint: function (token) {
         console.log('Token query started for ' + token);
         db.collection('Home Data').where('AuthToken', '==', token).get()
             .then((query) => {
