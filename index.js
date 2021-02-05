@@ -8,7 +8,10 @@ exports.router = async function(req, res) {
     console.log('Seeking endpoint for token '+authToken);
     firestore.getEndpoint(authToken)
     .then((data) => {
-        proxy.web(req, res, {target: data.url});
+        proxy.web(req, res, {
+            changeOrigin: true,
+            target: data.url
+        });
     })
     .catch( (e) => {
         console.log(e);
