@@ -6,7 +6,7 @@ exports.router = async function(req, res) {
     console.log('Seeking endpoint for token '+authToken);
     firestore.getEndpoint(authToken)
     .then((data) => {
-        res.redirect(data.url);
+        res.redirect(307, data.url);
     })
     .catch( (e) => {
         console.log(e);
