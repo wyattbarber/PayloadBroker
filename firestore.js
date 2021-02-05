@@ -59,33 +59,33 @@ module.exports = {
 
     getEndpoint: async function (token) {
         console.log('Token query started for ' + token);
-        db.collection('Home Data').where('AuthToken', '==', token).get()
-            .then((query) => {
-                if (query.empty) {
-                    console.error('Token query: no match found.');
-                    throw 'Bad token';
-                }
-                if (query.length > 1) {
-                    console.error('Token query: multiple matches found');
-                    throw 'Bad token';
-                }
+        const query = await db.collection('Home Data').where('AuthToken', '==', token).get()
 
-                console.log('Token query: match found');
-                const data = query.docs[0].data();
-                return new Promise((resolve, reject) => {
-                    if(data){
-                        resolve({
-                            url: data.HomeAddress,
-                            key: data.HomeAccessKey
-                        });
-                    }
-                    else {
-                        reject({
-                            url: "potato",
-                            key: "potato"
-                        })
-                    }
+        if (query.empty) {
+            console.error('Token query: no match found.');
+            throw 'Bad token';
+        }
+        if (query.length > 1) {
+            console.error('Token query: multiple matches found');
+            throw 'Bad token';
+        }
+
+        console.log('Token query: match found');
+        const data = await query.docs[0].data();
+
+        return new Promise((resolve, reject) => {
+            if (data) {
+                resolve({
+                    url: data.HomeAddress,
+                    key: data.HomeAccessKey
                 });
-            });
+            }
+            else {
+                reject({
+                    url: "potato",
+                    key: "potato"
+                })
+            }
+        });
     }
 };
