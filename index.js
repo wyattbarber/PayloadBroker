@@ -1,4 +1,6 @@
 const firestore = require('./firestore');
+const httpProxy = require('http-proxy');
+const proxy = httpProxy.createProxyServer();
 
 exports.router = async function(req, res) {
     // Find matchng user with auth key
@@ -6,7 +8,7 @@ exports.router = async function(req, res) {
     console.log('Seeking endpoint for token '+authToken);
     firestore.getEndpoint(authToken)
     .then((data) => {
-        res.redirect(307, data.url);
+        proxy.web(req, res, {target: data.url});
     })
     .catch( (e) => {
         console.log(e);
