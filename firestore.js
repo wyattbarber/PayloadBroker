@@ -60,7 +60,7 @@ module.exports = {
     getEndpoint: async function(token) {
         db.collection('Home Data').where('AuthToken', '==', token).get()
         .then((query) => {
-            const data = await query.docs[0].data()
+            const data = query.docs[0].data()
             return {
                 url: data.HomeAddress,
                 key: data.HomeAccessKey
