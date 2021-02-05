@@ -58,11 +58,20 @@ module.exports = {
     },
 
     getEndpoint: async function(token) {
-        console.log('Token query started.');
+        console.log('Token query started for '+token);
         db.collection('Home Data').where('AuthToken', '==', token).get()
         .then((query) => {
-            console.log('Token query: found match for '+token);
-            const data = query.docs[0].data()
+            if (query.empty) {
+                console.error('Token query: no match found.');
+                throw 'Bad token';
+            }
+            if (query.length > 1) {
+                console.error('Token query: multiple matches found');
+                throw 'Bad token';
+            }
+
+            console.log('Token query: match found');
+            const data = query.docs[0].data();
             return {
                 url: data.HomeAddress,
                 key: data.HomeAccessKey
