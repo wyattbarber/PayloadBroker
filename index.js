@@ -3,6 +3,7 @@ const firestore = require('./firestore');
 exports.router = (req, res) => {
     // Find matchng user with auth key
     const authToken = String(req.headers.authorization).substr(7);
+    console.log('Seeking endpoint for token '+authToken);
     firestore.getEndpoint(authToken)
     .then((data) => {
         res.redirect(url);
