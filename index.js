@@ -1,48 +1,17 @@
 const firestore = require('./firestore');
-const{smarthome} = require('actions-on-google');
-const functions = require('firebase-functions');
-const app = smarthome();
-const axios = require('axios');
 
-// Smarthome intent fulfillment 
-app.onSync((body, headers) =>{
-    const authToken = String(headers.authorization).substr(7);
+exports.router = (req, res) => {
+    // Find matchng user with auth key
+    const authToken = String(req.headers.authorization).substr(7);
     firestore.getEndpoint(authToken)
-    .then((home) => {
-        axios.get(home.url+'/smarthome/fulfillment/sync?key='+home.key)
-        .then((res) => {
-            let syncResponse = {
-                requestId: body.requestId,
-                payload: {
-                    agentUserId: res.body.user,
-                    devices: res.body.devices
-                }
-            };
-            return syncResponse;
-        });
+    .then((data) => {
+        res.redirect(url);
     })
-    .catch((e) => {
-        let syncResponse = {
-            requestId: body.requestId,
-            payload: {
-                errorCode: 400,
-                debugString: e,
-                agentUserId: 'GCP',
-                devices: []
-            }
-        };
-        return syncResponse;
+    .catch( (e) => {
+        console.log(e);
+        res.status(400).send({error: e});
     });
-});
-
-app.onQuery((body, headers) => {
-
-});
-app.onExecute((body, headers) => {
-
-});
-
-exports.router = functions.https.onRequest(app);
+};
 
 // Store url from home device
 exports.link_home = (req, res) => {
