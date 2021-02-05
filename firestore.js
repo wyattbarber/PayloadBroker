@@ -71,7 +71,7 @@ module.exports = {
                 }
 
                 console.log('Token query: match found');
-                const data = await query.docs[0].data();
+                const data = query.docs[0].data();
                 return new Promise((resolve, reject) => {
                     if(data){
                         resolve({
