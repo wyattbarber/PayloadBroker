@@ -1,32 +1,41 @@
 const firestore = require('./firestore');
-const httpProxy = require('http-proxy');
-const proxy = httpProxy.createProxyServer();
+const axios = require('axios');
+const functions = require('firebase-functions');
+const { smarthome } = require('actions-on-google');
+const app = smarthome();
 
-exports.router = async function(req, res) {
-    // Assemble request body
-    let b;
-    req.on('data', (chunk) => {
-        b += chunk;
-    })
-    req.on('end', () => {
-        req.body = JSON.parse(b);
-        console.log(req.body);
-    });
+exports.router = functions.https.onRequest(app);
+
+app.onSync(async function (body, headers){
+    console.log('SYNC request recieved');
     // Find matchng user with auth key
-    const authToken = String(req.headers.authorization).substr(7);
-    console.log('Seeking endpoint for token '+authToken);
+    const authToken = String(headers.authorization).substr(7);
+    console.log('Seeking endpoint for token ' + authToken);
     firestore.getEndpoint(authToken)
     .then((data) => {
-        proxy.web(req, res, {
-            changeOrigin: true,
-            target: data.url
+        console.log('Forwarding SYNC request');
+        axios({
+            method: 'post',
+            url: data.url,
+            headers: headers,
+            data: body
+        })
+        .then((res) => {
+            console.log('SYNC response recieved');
+            return {
+                requestId: body.requestId,
+                payload: {
+                    agentUserId: res.user,
+                    devices: res.devices
+                }
+            }
         });
     })
-    .catch( (e) => {
-        console.log(e);
-        res.status(400).send({error: e});
+    .catch((e) => {
+        console.error(e);
+        return undefined;
     });
-};
+});
 
 // Store url from home device
 exports.link_home = (req, res) => {
@@ -41,7 +50,7 @@ exports.link_home = (req, res) => {
         var newReq = req;
         newReq.body.param = 'HomeAddress';
         newReq.body.value = req.body.url;
-        firestore.set(req, res).then(function(){
+        firestore.set(req, res).then(function () {
             firestore.getUserData(req, res).then((newData) => {
                 // Send response with verification key and set url
                 res.status(202).send({
@@ -50,7 +59,7 @@ exports.link_home = (req, res) => {
                 });
             });
         });
-        
+
     });
 }
 
