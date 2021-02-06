@@ -32,13 +32,15 @@ app.onSync(async function (body, headers) {
     return new Promise((resolve, reject) => {
         if (res != undefined) {
             console.log('Response resolved');
-            resolve({
+            let syncRes = {
                 requestId: body.requestId,
                 payload: {
                     agentUserId: res.user,
                     devices: res.devices
                 }
-            });
+            };
+            console.log(syncRes);
+            resolve(syncRes);
         }
         else {
             reject(undefined);
