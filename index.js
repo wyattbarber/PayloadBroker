@@ -47,7 +47,6 @@ app.onSync(async function (body, headers) {
             });
         }
         else {
-            console.error('Response rejected');
             reject(undefined);
         }
     });
