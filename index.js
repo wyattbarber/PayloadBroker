@@ -36,7 +36,7 @@ app.onSync(async function (body, headers) {
     }
 
     return new Promise((resolve, reject) => {
-        if (res) {
+        if (res != undefined) {
             console.log('Response resolved');
             resolve({
                 requestId: body.requestId,
