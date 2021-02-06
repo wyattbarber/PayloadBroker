@@ -32,11 +32,14 @@ app.onSync(async function (body, headers) {
     return new Promise((resolve, reject) => {
         if (res != undefined) {
             console.log('Response resolved');
+            let b;
+            res.on('data', (chunk) => {b += chunk;});
+            res.on('end', () => {res.body = JSON.parse(b);});
             let syncRes = {
                 requestId: body.requestId,
                 payload: {
-                    agentUserId: res.user,
-                    devices: res.devices
+                    agentUserId: res.body.user,
+                    devices: res.body.devices
                 }
             };
             console.log(syncRes);
