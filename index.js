@@ -21,15 +21,9 @@ app.onSync(async function (body, headers) {
         let data = await firestore.getEndpoint(authToken);
 
         console.log('Forwarding SYNC request');
-        let options = {
-            method: 'POST',
-            headers: {
-                'Authorization': data.key,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json;charset=UTF-8'
-            }
-        };
-        res = await fetch(data.url, options);
+        res = await axios.post(data.url, {
+            key: data.key
+        });
     }
     catch (e) {
         console.error(e);
