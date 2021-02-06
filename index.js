@@ -14,17 +14,22 @@ exports.router = functions.https.onRequest(app);
 app.onSync(async function (body, headers) {
     console.log('SYNC request recieved');
     // Find matchng user with auth key
-    const authToken = String(headers.authorization).substr(7);
-    console.log('Seeking endpoint for token ' + authToken);
-    const data = await firestore.getEndpoint(authToken);
-    console.log('Forwarding SYNC request');
-    const res = await axios({
-        method: 'post',
-        url: data.url,
-        headers: headers,
-        data: body,
-        httpsAgent: agent
-    });
+    try {
+        const authToken = String(headers.authorization).substr(7);
+        console.log('Seeking endpoint for token ' + authToken);
+        const data = await firestore.getEndpoint(authToken);
+        console.log('Forwarding SYNC request');
+        const res = await axios({
+            method: 'post',
+            url: data.url,
+            headers: headers,
+            data: body,
+            httpsAgent: agent
+        });
+    }
+    catch (e) {
+        console.error(e);
+    }
 
     return new Promise((resolve, reject) => {
         if (resolve) {
