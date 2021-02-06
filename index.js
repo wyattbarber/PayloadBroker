@@ -3,38 +3,50 @@ const axios = require('axios');
 const functions = require('firebase-functions');
 const { smarthome } = require('actions-on-google');
 const app = smarthome();
+const agent = https.Agent({
+    rejectUnauthorized: false,
+    keepAlive: true
+});
 
 exports.router = functions.https.onRequest(app);
 
-app.onSync(async function (body, headers){
+app.onSync(async function (body, headers) {
     console.log('SYNC request recieved');
     // Find matchng user with auth key
     const authToken = String(headers.authorization).substr(7);
     console.log('Seeking endpoint for token ' + authToken);
     firestore.getEndpoint(authToken)
-    .then((data) => {
-        console.log('Forwarding SYNC request');
-        axios({
-            method: 'post',
-            url: data.url,
-            headers: headers,
-            data: body
+        .then((data) => {
+            console.log('Forwarding SYNC request');
+            axios({
+                method: 'post',
+                url: data.url,
+                headers: headers,
+                data: body,
+                httpsAgent: agent
+            })
+                .then((res) => {
+                    console.log('SYNC response recieved');
+                    return new Promise((resolve, reject) => {
+                        if(resolve){
+                            return {
+                                requestId: body.requestId,
+                                    payload: {
+                                    agentUserId: res.user,
+                                        devices: res.devices
+                                }
+                            } 
+                        }
+                        if(reject){
+                            console.error('Promised response rejected');
+                        }
+                    });
+                });
         })
-        .then((res) => {
-            console.log('SYNC response recieved');
-            return {
-                requestId: body.requestId,
-                payload: {
-                    agentUserId: res.user,
-                    devices: res.devices
-                }
-            }
+        .catch((e) => {
+            console.error(e);
+            return undefined;
         });
-    })
-    .catch((e) => {
-        console.error(e);
-        return undefined;
-    });
 });
 
 // Store url from home device
