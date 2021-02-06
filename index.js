@@ -16,38 +16,31 @@ app.onSync(async function (body, headers) {
     // Find matchng user with auth key
     const authToken = String(headers.authorization).substr(7);
     console.log('Seeking endpoint for token ' + authToken);
-    firestore.getEndpoint(authToken)
-        .then((data) => {
-            console.log('Forwarding SYNC request');
-            axios({
-                method: 'post',
-                url: data.url,
-                headers: headers,
-                data: body,
-                httpsAgent: agent
-            })
-                .then((res) => {
-                    console.log('SYNC response recieved');
-                    return new Promise((resolve, reject) => {
-                        if(resolve){
-                            return {
-                                requestId: body.requestId,
-                                    payload: {
-                                    agentUserId: res.user,
-                                        devices: res.devices
-                                }
-                            } 
-                        }
-                        if(reject){
-                            console.error('Promised response rejected');
-                        }
-                    });
-                });
-        })
-        .catch((e) => {
-            console.error(e);
+    const data = await firestore.getEndpoint(authToken);
+    console.log('Forwarding SYNC request');
+    const res = await axios({
+        method: 'post',
+        url: data.url,
+        headers: headers,
+        data: body,
+        httpsAgent: agent
+    });
+
+    return new Promise((resolve, reject) => {
+        if (resolve) {
+            return {
+                requestId: body.requestId,
+                payload: {
+                    agentUserId: res.user,
+                    devices: res.devices
+                }
+            }
+        }
+        if (reject) {
+            console.error('Promised response rejected');
             return undefined;
-        });
+        }
+    });
 });
 
 // Store url from home device
