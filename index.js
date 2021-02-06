@@ -3,7 +3,7 @@ const axios = require('axios');
 const functions = require('firebase-functions');
 const { smarthome } = require('actions-on-google');
 const app = smarthome();
-const httpe = require('https');
+const https = require('https');
 const agent = https.Agent({
     rejectUnauthorized: false,
     keepAlive: true
