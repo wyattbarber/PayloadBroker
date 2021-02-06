@@ -19,7 +19,7 @@ app.onSync(async function (body, headers) {
         let authToken = String(headers.authorization).substr(7);
         console.log('Seeking endpoint for token ' + authToken);
         let data = await firestore.getEndpoint(authToken);
-        
+
         console.log('Forwarding SYNC request');
         let options = {
             method: 'POST',
@@ -36,19 +36,19 @@ app.onSync(async function (body, headers) {
     }
 
     return new Promise((resolve, reject) => {
-        if (resolve) {
+        if (res) {
             console.log('Response resolved');
-            return {
+            resolve({
                 requestId: body.requestId,
                 payload: {
                     agentUserId: res.user,
                     devices: res.devices
                 }
-            }
+            });
         }
-        if (reject) {
+        else {
             console.error('Response rejected');
-            return undefined;
+            reject(undefined);
         }
     });
 });
