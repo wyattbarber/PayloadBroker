@@ -3,6 +3,15 @@ const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer();
 
 exports.router = async function(req, res) {
+    // Assemble request body
+    let b;
+    req.on('data', (chunk) => {
+        b += chunk;
+    })
+    req.on('end', () => {
+        req.body = JSON.parse(b);
+        console.log(req.body);
+    });
     // Find matchng user with auth key
     const authToken = String(req.headers.authorization).substr(7);
     console.log('Seeking endpoint for token '+authToken);
