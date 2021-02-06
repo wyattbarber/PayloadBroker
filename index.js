@@ -28,6 +28,7 @@ app.onSync(async function (body, headers) {
 
     return new Promise((resolve, reject) => {
         if (resolve) {
+            console.log('Response resolved');
             return {
                 requestId: body.requestId,
                 payload: {
@@ -37,7 +38,7 @@ app.onSync(async function (body, headers) {
             }
         }
         if (reject) {
-            console.error('Promised response rejected');
+            console.error('Response rejected');
             return undefined;
         }
     });
