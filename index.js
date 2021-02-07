@@ -36,8 +36,8 @@ app.onSync(async function (body, headers) {
             let syncRes = {
                 requestId: body.requestId,
                 payload: {
-                    agentUserId: res.body.user,
-                    devices: res.body.devices
+                    agentUserId: res.data.user,
+                    devices: res.data.devices
                 }
             };
             console.log(syncRes);
