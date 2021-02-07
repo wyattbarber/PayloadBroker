@@ -32,6 +32,7 @@ app.onSync(async function (body, headers) {
     return new Promise((resolve, reject) => {
         if (res != undefined) {
             console.log('Response resolved');
+            console.log(res);
             let syncRes = {
                 requestId: body.requestId,
                 payload: {
