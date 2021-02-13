@@ -30,7 +30,7 @@ app.onSync(async function (body, headers) {
     }
 
     return new Promise((resolve, reject) => {
-        if (res != undefined) {
+        if (res.data != undefined) {
             console.log('Response resolved');
             let syncRes = {
                 requestId: body.requestId,
