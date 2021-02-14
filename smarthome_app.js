@@ -91,7 +91,7 @@ app.onQuery(async function (body, headers) {
 });
 
 // Forward EXECUTE intents to home
-app.onQuery(async function (body, headers) {
+app.onExecute(async function (body, headers) {
     console.log('QUERY request recieved');
     let res;
     try {
