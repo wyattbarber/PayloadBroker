@@ -1,51 +1,9 @@
 const firestore = require('./firestore');
-const axios = require('axios');
 const functions = require('firebase-functions');
-const { smarthome } = require('actions-on-google');
-const app = smarthome();
-const https = require('https');
-const agent = https.Agent({
-    rejectUnauthorized: false,
-    keepAlive: true
-});
+const { app } = require('./smarthome_app');
 
+// Fulfillment redirect function
 exports.router = functions.https.onRequest(app);
-
-app.onSync(async function (body, headers) {
-    console.log('SYNC request recieved');
-    // Find matchng user with auth key
-    let res;
-    try {
-        let authToken = String(headers.authorization).substr(7);
-        console.log('Seeking endpoint for token ' + authToken);
-        let data = await firestore.getEndpoint(authToken);
-
-        console.log('Forwarding SYNC request');
-        res = await axios.post(data.url, {
-            key: data.key
-        });
-    }
-    catch (e) {
-        console.error(e);
-    }
-
-    return new Promise((resolve, reject) => {
-        if (res.data != undefined) {
-            console.log('Response resolved');
-            let syncRes = {
-                requestId: body.requestId,
-                payload: {
-                    agentUserId: res.data.user,
-                    devices: res.data.devices
-                }
-            };
-            resolve(syncRes);
-        }
-        else {
-            reject(undefined);
-        }
-    });
-});
 
 // Store url from home device
 exports.link_home = (req, res) => {
