@@ -103,8 +103,7 @@ app.onExecute(async function (body, headers) {
         console.log('Forwarding EXECUTE request');
         res = await axios.post(data.url+'/smarthome/fulfillment/execute', {
             key: data.key,
-            commands: body.inputs.payload.commands.execution,
-            devices: body.inputs.payload.commands.devices
+            commands: body.inputs.payload.commands
         });
     }
     catch (e) {

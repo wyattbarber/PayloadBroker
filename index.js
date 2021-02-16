@@ -1,9 +1,9 @@
 const firestore = require('./firestore');
 const functions = require('firebase-functions');
-const { app } = require('./smarthome_app');
+const sm_app = require('./smarthome_app');
 
 // Fulfillment redirect function
-exports.router = functions.https.onRequest(app);
+exports.router = functions.https.onRequest(sm_app.app);
 
 // Store url from home device
 exports.link_home = (req, res) => {
