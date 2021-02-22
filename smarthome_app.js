@@ -54,6 +54,7 @@ app.onSync(async function (body, headers) {
 // Forward QUERY requests to home
 app.onQuery(async function (body, headers) {
     console.log('QUERY request recieved');
+    console.log(body);
     let res;
     try {
         // Find matchng user with auth key
