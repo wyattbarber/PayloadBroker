@@ -65,7 +65,7 @@ app.onQuery(async function (body, headers) {
         console.log('Forwarding QUERY request');
         res = await axios.post(data.url+'/smarthome/fulfillment/query', {
             key: data.key,
-            devices: body.inputs.payload.devices
+            devices: body.inputs[0].payload.devices
         });
     }
     catch (e) {
@@ -101,7 +101,7 @@ app.onExecute(async function (body, headers) {
         console.log('Forwarding EXECUTE request');
         res = await axios.post(data.url+'/smarthome/fulfillment/execute', {
             key: data.key,
-            commands: body.inputs.payload.commands
+            commands: body.inputs[0].payload.commands
         });
     }
     catch (e) {
