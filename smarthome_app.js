@@ -92,7 +92,7 @@ app.onQuery(async function (body, headers) {
 
 // Forward EXECUTE intents to home
 app.onExecute(async function (body, headers) {
-    console.log('QUERY request recieved');
+    console.log('EXECUTE request recieved');
     let res;
     try {
         // Find matchng user with auth key
