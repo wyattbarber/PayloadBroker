@@ -78,7 +78,7 @@ app.onQuery(async function (body, headers) {
             console.log('Response resolved');
             let queryRes = {
                 requestId: body.requestId,
-                payload: res.payload
+                payload: res.data.payload
             };
             resolve(queryRes);
         }
